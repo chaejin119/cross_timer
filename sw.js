@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cjin-timer-v1.02';
+const CACHE_NAME = 'cjin-timer-v1.1';
 const ASSETS = [
   './',
   './index.html',
