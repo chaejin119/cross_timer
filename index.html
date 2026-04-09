@@ -4,15 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>CrossTimer • CFGN.SS</title>
+    
+    <!-- PWA & Mobile Optimization -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#09090b">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="https://cdn.pixabay.com/photo/2016/03/31/14/37/check-mark-1292787_1280.png">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * { -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
-        body { background-color: #09090b; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; overflow: hidden; transition: background-color 0.4s ease; }
+        :root {
+            --sat: env(safe-area-inset-top);
+            --sar: env(safe-area-inset-right);
+            --sab: env(safe-area-inset-bottom);
+            --sal: env(safe-area-inset-left);
+        }
+        * { -webkit-tap-highlight-color: transparent; user-select: none; outline: none; box-sizing: border-box; }
+        body { 
+            background-color: #09090b; 
+            margin: 0; 
+            padding: var(--sat) var(--sar) var(--sab) var(--sal);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            overflow: hidden; 
+            transition: background-color 0.4s ease;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
         .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
         .italic { font-style: italic; } .uppercase { text-transform: uppercase; } .hidden { display: none !important; }
         @keyframes pulse-custom { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
@@ -23,152 +42,169 @@
         .log-scroll::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="bg-zinc-950 text-white min-h-screen flex flex-col italic uppercase text-center">
+<body class="bg-zinc-950 text-white italic uppercase text-center">
+    <!-- Background Decor -->
     <div class="fixed inset-0 flex items-center justify-center pointer-events-none z-0 overflow-hidden text-white/5 font-black text-[35vw] tracking-tighter leading-none select-none" style="-webkit-text-stroke: 2px white; color: transparent;">CFGN</div>
-    <div id="pre-countdown-overlay" class="fixed inset-0 z-[60] flex flex-col items-center justify-center hidden bg-yellow-500/95 text-center">
+    
+    <!-- Pre-Countdown Overlay -->
+    <div id="pre-countdown-overlay" class="fixed inset-0 z-[100] flex flex-col items-center justify-center hidden bg-yellow-500/95 text-center text-black">
         <span class="text-black font-black text-2xl tracking-[0.5em] mb-8 uppercase">Preparing</span>
         <span id="pre-countdown-number" class="text-[50vw] font-black text-black leading-none tabular-nums text-center">5</span>
     </div>
-    <main class="relative z-10 flex-1 flex flex-col p-6 backdrop-blur-[2px] safe-area-inset">
+
+    <!-- Main Content -->
+    <main class="relative z-10 flex-1 flex flex-col p-6 backdrop-blur-[2px]">
         <header class="flex justify-between items-end mb-8 border-b border-white/5 pb-4 text-left">
             <div class="flex flex-col items-start">
-                <div class="flex items-baseline gap-2 text-left">
+                <div class="flex items-baseline gap-2">
                     <span class="text-3xl font-black tracking-tighter text-white">CFGN</span><span class="text-3xl font-black tracking-tighter text-emerald-500">.SS</span>
                     <div class="flex items-center gap-1.5 ml-2 border-l border-white/10 pl-3">
                         <span class="text-[7px] tracking-widest text-white/20 font-bold uppercase">BY</span>
-                        <span class="text-[14px] tracking-[0.1em] text-white/60 font-black italic text-left">C.JIN</span>
+                        <span class="text-[14px] tracking-[0.1em] text-white/60 font-black italic">C.JIN</span>
                         <span class="text-[8px] tracking-[0.1em] text-white/20 font-bold ml-1">V1.01</span>
                     </div>
                 </div>
             </div>
-            <div id="pre-count-toggle" class="flex flex-col items-end gap-1 cursor-pointer group text-right">
+            <div id="pre-count-toggle" class="flex flex-col items-end gap-1 cursor-pointer group">
                 <span class="text-[8px] text-white/30 font-black tracking-widest mr-1">PRE-COUNT</span>
                 <div class="w-12 h-6 bg-emerald-500/20 rounded-full p-1 relative border border-white/5" id="toggle-bg">
                     <div class="w-4 h-4 bg-emerald-500 rounded-full transition-transform duration-300 transform translate-x-6 shadow-xl" id="toggle-dot"></div>
                 </div>
             </div>
         </header>
+
         <nav class="grid grid-cols-4 gap-1 mb-8 bg-white/5 p-1 rounded-2xl border border-white/5">
-            <button id="mode-amrap" class="py-3 rounded-xl text-[9px] font-black tracking-widest bg-emerald-500 text-black">AMRAP</button>
-            <button id="mode-fortime" class="py-3 rounded-xl text-[9px] font-black tracking-widest text-white/40">FOR TIME</button>
-            <button id="mode-tabata" class="py-3 rounded-xl text-[9px] font-black tracking-widest text-white/40">TABATA</button>
-            <button id="mode-emom" class="py-3 rounded-xl text-[9px] font-black tracking-widest text-white/40">EMOM</button>
+            <button id="mode-amrap" class="py-3 rounded-xl text-[9px] font-black tracking-widest bg-emerald-500 text-black transition-all">AMRAP</button>
+            <button id="mode-fortime" class="py-3 rounded-xl text-[9px] font-black tracking-widest text-white/40 transition-all">FOR TIME</button>
+            <button id="mode-tabata" class="py-3 rounded-xl text-[9px] font-black tracking-widest text-white/40 transition-all">TABATA</button>
+            <button id="mode-emom" class="py-3 rounded-xl text-[9px] font-black tracking-widest text-white/40 transition-all">EMOM</button>
         </nav>
-        <section class="flex-1 flex flex-col items-center justify-center relative text-center">
+
+        <section class="flex-1 flex flex-col items-center justify-center relative">
             <div id="status-label" class="text-emerald-400 text-xl font-black tracking-[0.3em] mb-2 w-full transition-colors duration-300 uppercase">READY</div>
-            <div id="timer-display" class="text-[22vw] leading-none font-black font-mono tabular-nums text-white drop-shadow-2xl cursor-pointer transition-transform active:scale-95 text-center">05:00.00</div>
+            <div id="timer-display" class="text-[22vw] leading-none font-black font-mono tabular-nums text-white drop-shadow-2xl cursor-pointer transition-transform active:scale-95">05:00.00</div>
             <div id="setup-hint" class="mt-2 text-[10px] text-white/20 font-bold tracking-[0.2em] w-full uppercase">Tap To Set Time</div>
+
             <div id="tabata-config" class="mt-8 flex items-center justify-center gap-10 opacity-0 transition-all hidden">
-                <div id="config-work" class="flex flex-col items-center cursor-pointer active:scale-95 text-center">
+                <div id="config-work" class="flex flex-col items-center cursor-pointer active:scale-95">
                     <span class="text-[8px] text-emerald-500/60 font-black tracking-[0.3em] mb-1">WORK</span>
-                    <span id="tabata-work-text" class="text-3xl font-black text-white font-mono text-center">00:20</span>
+                    <span id="tabata-work-text" class="text-3xl font-black text-white font-mono">00:20</span>
                 </div>
                 <div class="h-8 w-[1px] bg-white/10"></div>
-                <div id="config-rest" class="flex flex-col items-center cursor-pointer active:scale-95 text-center">
+                <div id="config-rest" class="flex flex-col items-center cursor-pointer active:scale-95">
                     <span class="text-[8px] text-red-500/60 font-black tracking-[0.3em] mb-1">REST</span>
-                    <span id="tabata-rest-text" class="text-3xl font-black text-white font-mono text-center">00:10</span>
+                    <span id="tabata-rest-text" class="text-3xl font-black text-white font-mono">00:10</span>
                 </div>
             </div>
-            <div id="info-row" class="mt-8 flex items-center justify-center gap-8 opacity-0 transition-all text-center">
-                <div id="record-col" class="flex flex-col items-center text-center">
+
+            <div id="info-row" class="mt-8 flex items-center justify-center gap-8 opacity-0 transition-all">
+                <div id="record-col" class="flex flex-col items-center transition-all">
                     <span id="record-label" class="text-[9px] text-emerald-500/60 font-black tracking-[0.3em] mb-1 uppercase">Record</span>
                     <div class="flex items-baseline gap-1"><span id="rap-count" class="text-7xl font-black text-white tabular-nums">0</span><span id="record-unit" class="text-xs font-black text-white/20 uppercase">Raps</span></div>
                 </div>
                 <div id="divider-col" class="h-12 w-[1px] bg-white/10"></div>
-                <div class="flex flex-col items-center text-center">
-                    <span id="cap-label" class="text-[9px] text-white/30 font-black tracking-[0.3em] mb-1 uppercase text-center">Time Cap</span>
-                    <span id="target-display" class="text-2xl font-black text-white/60 font-mono text-center">05:00</span>
+                <div class="flex flex-col items-center">
+                    <span id="cap-label" class="text-[9px] text-white/30 font-black tracking-[0.3em] mb-1 uppercase">Time Cap</span>
+                    <span id="target-display" class="text-2xl font-black text-white/60 font-mono">05:00</span>
                 </div>
             </div>
+
             <div id="log-container" class="mt-8 w-full max-w-[300px] hidden opacity-0 transition-all duration-500 text-center">
                 <span id="log-count" class="text-[8px] text-white/20 font-black tracking-widest mb-2 block uppercase text-center">0 Recorded</span>
                 <div id="log-list" class="log-scroll flex flex-wrap gap-2 justify-center max-h-[80px] overflow-y-auto pb-4"></div>
             </div>
-            <div id="round-info" class="mt-6 flex flex-col items-center opacity-0 transition-all text-center">
+
+            <div id="round-info" class="mt-6 flex flex-col items-center opacity-0 transition-all">
                 <div class="flex items-center gap-6 justify-center">
                     <button id="round-minus" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-xl font-black active:scale-90">-</button>
-                    <div id="round-setup-trigger" class="flex flex-col items-center cursor-pointer active:scale-95 text-center">
+                    <div id="round-setup-trigger" class="flex flex-col items-center cursor-pointer active:scale-95">
                         <span id="round-text" class="text-white text-3xl font-black tracking-widest italic uppercase">Round 01/08</span>
                         <span id="round-setup-hint" class="text-[8px] text-white/20 font-bold tracking-[0.2em] uppercase text-center">Set Rounds</span>
                     </div>
                     <button id="round-plus" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-xl font-black active:scale-90">+</button>
                 </div>
             </div>
+
             <button id="clear-btn" class="absolute inset-0 z-40 bg-emerald-500 text-black font-black text-6xl italic flex items-center justify-center animate-pulse-custom hidden uppercase text-center">Clear</button>
         </section>
+
         <footer class="grid grid-cols-3 gap-4 mt-auto pb-4 text-center">
             <button id="reset-btn" class="bg-zinc-900 border border-white/5 py-7 rounded-[2rem] flex items-center justify-center active:scale-90 transition-all text-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg></button>
-            <button id="start-btn" class="col-span-2 bg-emerald-500 text-black font-black text-3xl py-7 rounded-[2rem] active:scale-95 transition-all uppercase w-full">Start</button>
-            <button id="pause-btn" class="hidden col-span-2 bg-white text-black font-black text-3xl py-7 rounded-[2rem] active:scale-95 transition-all uppercase w-full text-center">Pause</button>
+            <button id="start-btn" class="col-span-2 bg-emerald-500 text-black font-black text-3xl py-7 rounded-[2rem] active:scale-95 transition-all text-center uppercase w-full">Start</button>
+            <button id="pause-btn" class="hidden col-span-2 bg-white text-black font-black text-3xl py-7 rounded-[2rem] active:scale-95 transition-all text-center uppercase w-full text-center">Pause</button>
         </footer>
     </main>
-    <div id="keypad-overlay" class="fixed inset-0 z-50 bg-zinc-950/95 flex flex-col p-6 translate-y-full transition-transform duration-300 hidden text-center">
+
+    <div id="keypad-overlay" class="fixed inset-0 z-[110] bg-zinc-950/95 flex flex-col p-6 translate-y-full transition-transform duration-300 hidden text-center">
         <header class="flex justify-between items-center mb-8"><span id="keypad-title" class="text-emerald-500 font-black tracking-widest uppercase text-left">Set Time</span><button id="keypad-close" class="text-white/40 font-bold text-sm underline tracking-widest uppercase">Cancel</button></header>
         <div class="flex-1 flex flex-col text-center">
             <div id="keypad-display" class="text-7xl font-black font-mono text-center text-white mb-12 tabular-nums">05:00</div>
             <div class="grid grid-cols-3 gap-3 max-w-sm mx-auto w-full mb-8 text-center">
-                <button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black transition-all">1</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black transition-all">2</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black transition-all">3</button>
-                <button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black transition-all">4</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black transition-all">5</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black transition-all">6</button>
-                <button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black transition-all">7</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black transition-all">8</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black transition-all">9</button>
-                <button id="key-clear" class="bg-red-500/10 text-red-500 py-6 rounded-2xl text-xl font-black">CLR</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black transition-all">0</button><button id="key-done" class="bg-emerald-500 text-black py-6 rounded-2xl text-xl font-black active:scale-95 uppercase text-center">Set</button>
+                <button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black">1</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black">2</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black">3</button>
+                <button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black">4</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black">5</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black">6</button>
+                <button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black">7</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black">8</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black">9</button>
+                <button id="key-clear" class="bg-red-500/10 text-red-500 py-6 rounded-2xl text-xl font-black">CLR</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black">0</button><button id="key-done" class="bg-emerald-500 text-black py-6 rounded-2xl text-xl font-black active:scale-95 uppercase">Set</button>
             </div>
         </div>
     </div>
+
     <script>
         if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => {}); }); }
         let state = { mode: 'AMRAP', status: 'READY', totalSeconds: 300, remainingSeconds: 300, elapsedSeconds: 0, rapCount: 0, currentRound: 1, totalRounds: 8, isRunning: false, isPreparing: false, isPreCountEnabled: true, timerInterval: null, logs: [], lastTouchTime: 0, tabataWork: 20, tabataRest: 10 };
         let wakeLock = null;
-        async function requestWakeLock() { try { if ('wakeLock' in navigator) { wakeLock = await navigator.wakeLock.request('screen'); } } catch (err) {} }
-        function releaseWakeLock() { if (wakeLock !== null) { wakeLock.release(); wakeLock = null; } }
-        function toggleFullScreen(enable) { 
-            if (!document.documentElement.requestFullscreen) return; 
-            if (enable) { if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(err => {}); } } 
-            else { if (document.fullscreenElement) { document.exitFullscreen().catch(err=>{}); } } 
+        async function reqWL() { try { if ('wakeLock' in navigator) { wakeLock = await navigator.wakeLock.request('screen'); } } catch (e) {} }
+        function relWL() { if (wakeLock !== null) { wakeLock.release(); wakeLock = null; } }
+        function tfs(e) { 
+            // iPhone Safari doesn't support requestFullscreen, so we handle it safely
+            if (document.documentElement.requestFullscreen) {
+                if (e) { if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(err => {}); } } 
+                else { if (document.fullscreenElement) { document.exitFullscreen().catch(err=>{}); } } 
+            }
         }
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        let lastSecond = -1, isTapLocked = false, keypadTarget = 'TIME';
+        const aCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let lSec = -1, iTL = false, kpT = 'TIME', inputBuffer = "";
         const els = {
-            toggle: document.getElementById('pre-count-toggle'), toggleBg: document.getElementById('toggle-bg'), toggleDot: document.getElementById('toggle-dot'),
-            startBtn: document.getElementById('start-btn'), pauseBtn: document.getElementById('pause-btn'), resetBtn: document.getElementById('reset-btn'),
-            timerDisplay: document.getElementById('timer-display'), statusLabel: document.getElementById('status-label'), targetDisplay: document.getElementById('target-display'),
-            setupHint: document.getElementById('setup-hint'), infoRow: document.getElementById('info-row'), recordCol: document.getElementById('record-col'), recordUnit: document.getElementById('record-unit'),
-            dividerCol: document.getElementById('divider-col'), rapCount: document.getElementById('rap-count'), roundInfo: document.getElementById('round-info'),
-            roundText: document.getElementById('round-text'), roundHint: document.getElementById('round-setup-hint'), logContainer: document.getElementById('log-container'),
-            logList: document.getElementById('log-list'), logCountText: document.getElementById('log-count'), clearBtn: document.getElementById('clear-btn'),
-            keypad: document.getElementById('keypad-overlay'), keypadDisplay: document.getElementById('keypad-display'), keypadTitle: document.getElementById('keypad-title'),
-            preOverlay: document.getElementById('pre-countdown-overlay'), preNumber: document.getElementById('pre-countdown-number'),
-            tabataConfig: document.getElementById('tabata-config'), tabataWorkText: document.getElementById('tabata-work-text'), tabataRestText: document.getElementById('tabata-rest-text'),
-            roundPlus: document.getElementById('round-plus'), roundMinus: document.getElementById('round-minus'), roundTrigger: document.getElementById('round-setup-trigger'),
-            modeBtns: { AMRAP: document.getElementById('mode-amrap'), FORTIME: document.getElementById('mode-fortime'), TABATA: document.getElementById('mode-tabata'), EMOM: document.getElementById('mode-emom') }
+            tg: document.getElementById('pre-count-toggle'), tgB: document.getElementById('toggle-bg'), tgD: document.getElementById('toggle-dot'),
+            stB: document.getElementById('start-btn'), psB: document.getElementById('pause-btn'), rsB: document.getElementById('reset-btn'),
+            tD: document.getElementById('timer-display'), sL: document.getElementById('status-label'), tGD: document.getElementById('target-display'),
+            sH: document.getElementById('setup-hint'), iR: document.getElementById('info-row'), rC: document.getElementById('record-col'), rU: document.getElementById('record-unit'),
+            dV: document.getElementById('divider-col'), rCt: document.getElementById('rap-count'), rI: document.getElementById('round-info'),
+            rT: document.getElementById('round-text'), rH: document.getElementById('round-setup-hint'), lC: document.getElementById('log-container'),
+            lL: document.getElementById('log-list'), lCT: document.getElementById('log-count'), cB: document.getElementById('clear-btn'),
+            kP: document.getElementById('keypad-overlay'), kD: document.getElementById('keypad-display'), kT: document.getElementById('keypad-title'),
+            pO: document.getElementById('pre-countdown-overlay'), pN: document.getElementById('pre-countdown-number'),
+            tCf: document.getElementById('tabata-config'), tWT: document.getElementById('tabata-work-text'), tRT: document.getElementById('tabata-rest-text'),
+            rP: document.getElementById('round-plus'), rM: document.getElementById('round-minus'), rTg: document.getElementById('round-setup-trigger'),
+            mBs: { AMRAP: document.getElementById('mode-amrap'), FORTIME: document.getElementById('mode-fortime'), TABATA: document.getElementById('mode-tabata'), EMOM: document.getElementById('mode-emom') }
         };
-        els.toggle.onclick = () => { if (state.isRunning || state.isPreparing) return; state.isPreCountEnabled = !state.isPreCountEnabled; els.toggleBg.classList.toggle('bg-emerald-500/20', state.isPreCountEnabled); els.toggleDot.classList.toggle('translate-x-6', state.isPreCountEnabled); els.toggleDot.classList.toggle('bg-emerald-500', state.isPreCountEnabled); playBeep(600, 0.05); };
+        els.tg.onclick = () => { if (state.isRunning || state.isPreparing) return; state.isPreCountEnabled = !state.isPreCountEnabled; els.tgB.classList.toggle('bg-emerald-500/20', state.isPreCountEnabled); els.tgD.classList.toggle('translate-x-6', state.isPreCountEnabled); els.tgD.classList.toggle('bg-emerald-500', state.isPreCountEnabled); playBeep(600, 0.05); };
         function fmt(s) { const min = Math.floor(s/60), sec = Math.floor(s%60); return `${min.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`; }
-        function updateDisplay(s) { const ms = Math.floor((s%1)*100); els.timerDisplay.textContent = `${fmt(s)}.${ms.toString().padStart(2,'0')}`; }
-        function playBeep(f=440, d=0.1, t='square') { if (audioCtx.state==='suspended') audioCtx.resume(); const o=audioCtx.createOscillator(), g=audioCtx.createGain(); o.type=t; o.frequency.setValueAtTime(f, audioCtx.currentTime); g.gain.setValueAtTime(0.05, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime+d); o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+d); }
-        function playWhistle() { if (audioCtx.state==='suspended') audioCtx.resume(); const p=(t)=>{const o=audioCtx.createOscillator(), g=audioCtx.createGain(); o.type='square'; o.frequency.setValueAtTime(150,t); g.gain.setValueAtTime(0.1,t); g.gain.exponentialRampToValueAtTime(0.01,t+0.3); o.connect(g); g.connect(audioCtx.destination); o.start(t); o.stop(t+0.3);}; const now=audioCtx.currentTime; p(now); p(now+0.4); }
-        function setStatus(s) { state.status=s; els.statusLabel.textContent=s; if(s==='REST'){document.body.classList.add('bg-rest-mode'); els.statusLabel.classList.replace('text-emerald-400','text-white');}else{document.body.classList.remove('bg-rest-mode'); els.statusLabel.classList.replace('text-white','text-emerald-400');} }
-        function handleStartBtn() { if(state.isRunning||state.isPreparing) return; if(state.status==='READY' && state.isPreCountEnabled) startPreCountdown(); else actualStart(); }
-        function startPreCountdown() { state.isPreparing=true; els.preOverlay.classList.remove('hidden'); let c=5; els.preNumber.textContent=c; playBeep(440); const i=setInterval(()=>{c--; if(c>0){els.preNumber.textContent=c; playBeep(440);}else{els.preNumber.textContent="GO"; playWhistle(); clearInterval(i); setTimeout(()=>{els.preOverlay.classList.add('hidden'); state.isPreparing=false; actualStart();},500);}},1000); }
-        function actualStart() { state.isRunning=true; requestWakeLock(); toggleFullScreen(true); if(!state.isPreCountEnabled && state.status==='READY') playWhistle(); if(state.status!=='PAUSED'){ if(state.mode==='TABATA'){state.remainingSeconds=state.tabataWork; state.currentRound=1;} else if(state.mode==='EMOM'){state.remainingSeconds=60; state.currentRound=1;} else if(state.mode==='FORTIME'){state.elapsedSeconds=0; state.lastTouchTime=0;} else {state.remainingSeconds=state.totalSeconds; state.lastTouchTime=state.totalSeconds;} } setStatus('WORK'); startInternalTimer(); els.startBtn.classList.add('hidden'); els.pauseBtn.classList.remove('hidden'); els.setupHint.classList.add('hidden'); els.roundHint.classList.add('hidden'); els.tabataConfig.classList.add('opacity-0'); if(state.mode==='AMRAP'||state.mode==='FORTIME')els.infoRow.classList.remove('opacity-0'); if(state.mode==='EMOM'||state.mode==='FORTIME'||state.mode==='AMRAP'){els.logContainer.classList.remove('hidden'); setTimeout(()=>els.logContainer.classList.remove('opacity-0'),10);} }
-        function startInternalTimer() { const st=Date.now(); const ir=(state.mode==='FORTIME')?state.elapsedSeconds:state.remainingSeconds; state.timerInterval=setInterval(()=>{ const d=(Date.now()-st)/1000; if(state.mode==='FORTIME'){ state.elapsedSeconds=Math.min(state.totalSeconds,ir+d); updateDisplay(state.elapsedSeconds); handleBeeps(state.totalSeconds-state.elapsedSeconds); if(state.elapsedSeconds>=state.totalSeconds)finishTimer(); }else{ state.remainingSeconds=Math.max(0,ir-d); updateDisplay(state.remainingSeconds); handleBeeps(state.remainingSeconds); if(state.mode==='TABATA'||state.mode==='EMOM')els.roundText.textContent=`ROUND ${state.currentRound.toString().padStart(2,'0')}/${state.totalRounds.toString().padStart(2,'0')}`; if(state.remainingSeconds <= 0)handleTransition(); } },30); }
-        function handleBeeps(t) { const c=Math.ceil(t); if(c<=3&&c>0&&c!==lastSecond){ playBeep(state.status==='WORK'?440:660); lastSecond=c; } }
-        function handleTransition() { clearInterval(state.timerInterval); if(state.mode!=='TABATA'&&state.mode!=='EMOM'){finishTimer();} else if(state.mode==='TABATA'){ if(state.status==='WORK'){ if(state.currentRound>=state.totalRounds){finishTimer();return;} setStatus('REST'); state.remainingSeconds=state.tabataRest; playBeep(220,0.3); lastSecond=-1; startInternalTimer(); } else { state.currentRound++; setStatus('WORK'); state.remainingSeconds=state.tabataWork; playBeep(880,0.3); lastSecond=-1; startInternalTimer(); } } else if(state.mode==='EMOM'){ if(state.currentRound>=state.totalRounds){finishTimer();return;} state.currentRound++; setStatus('WORK'); state.remainingSeconds=60; playWhistle(); lastSecond=-1; startInternalTimer(); } }
-        function finishTimer() { clearInterval(state.timerInterval); state.isRunning=false; releaseWakeLock(); toggleFullScreen(false); playBeep(110,1.5); updateDisplay(state.mode==='FORTIME'?state.totalSeconds:0); els.clearBtn.classList.remove('hidden'); els.pauseBtn.classList.add('hidden'); }
-        function resetTimer() { clearInterval(state.timerInterval); state.isRunning=false; state.isPreparing=false; state.currentRound=1; state.rapCount=0; state.elapsedSeconds=0; state.lastTouchTime=0; releaseWakeLock(); toggleFullScreen(false); state.remainingSeconds=(state.mode==='TABATA')?state.tabataWork:(state.mode==='EMOM'?60:state.totalSeconds); state.logs=[]; els.logList.innerHTML=''; els.logCountText.textContent='0 RECORDED'; els.rapCount.textContent="0"; setStatus('READY'); lastSecond=-1; const m=Math.floor(state.totalSeconds/60), s=state.totalSeconds%60; els.targetDisplay.textContent=`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; els.tabataWorkText.textContent=fmt(state.tabataWork); els.tabataRestText.textContent=fmt(state.tabataRest); if(state.mode==='FORTIME')updateDisplay(0); else updateDisplay(state.remainingSeconds); els.startBtn.classList.remove('hidden'); els.pauseBtn.classList.add('hidden'); els.setupHint.classList.remove('hidden'); els.clearBtn.classList.add('hidden'); els.infoRow.classList.toggle('opacity-0', state.mode==='TABATA'||state.mode==='EMOM'); els.roundInfo.classList.toggle('opacity-0', state.mode!=='TABATA'&&state.mode!=='EMOM'); els.tabataConfig.classList.toggle('hidden', state.mode!=='TABATA'); els.tabataConfig.classList.toggle('opacity-0', state.mode!=='TABATA'); els.logContainer.classList.add('hidden','opacity-0'); if(state.mode==='TABATA'||state.mode==='EMOM'){els.roundHint.classList.remove('hidden'); els.roundText.textContent=`ROUND 01/${state.totalRounds.toString().padStart(2,'0')}`;} if(state.mode==='FORTIME'){els.recordUnit.textContent='LAPS'; els.recordCol.classList.remove('hidden'); els.dividerCol.classList.remove('hidden');}else{els.recordUnit.textContent='RAPS';} }
-        function recordLog() { if (isTapLocked) return; const now = (state.mode==='FORTIME') ? state.elapsedSeconds : state.remainingSeconds; if(state.mode==='EMOM') { const tt=Math.max(0, state.remainingSeconds), actualTaken = 60 - tt, ex=state.logs.findIndex(l=>l.round===state.currentRound); if(ex>-1){state.logs[ex].time=actualTaken; const b=els.logList.querySelector(`[data-round="${state.currentRound}"]`); if(b){b.innerHTML=`<span class="text-white/30 text-[8px]">R${state.currentRound}</span><span>${actualTaken.toFixed(1)}S</span>`; b.classList.remove('animate-pulse'); void b.offsetWidth; b.classList.add('animate-pulse');}} else {state.logs.push({round:state.currentRound, time:actualTaken}); const b=document.createElement('div'); b.setAttribute('data-round',state.currentRound); b.className="bg-white/5 border border-white/10 px-2 py-1 rounded text-[10px] font-black font-mono flex items-baseline gap-1 animate-pulse transition-all"; b.innerHTML=`<span class="text-white/30 text-[8px]">R${state.currentRound}</span><span>${actualTaken.toFixed(1)}S</span>`; els.logList.appendChild(b);} } else { state.rapCount++; els.rapCount.textContent=state.rapCount; const gap = Math.abs(now - state.lastTouchTime); state.lastTouchTime = now; const b=document.createElement('div'); b.className="bg-white/5 border border-white/10 px-2 py-1 rounded text-[10px] font-black font-mono flex items-baseline gap-2 animate-pulse transition-all"; const label = (state.mode==='FORTIME') ? 'L' : 'R'; b.innerHTML=`<span class="text-white/30 text-[8px]">${label}${state.rapCount}</span><span>${fmt(now)}</span><span class="text-emerald-500 text-[8px]">+${gap.toFixed(1)}S</span>`; els.logList.prepend(b); isTapLocked = true; els.recordCol.classList.add('tap-locked', 'scale-110'); setTimeout(() => { isTapLocked = false; els.recordCol.classList.remove('tap-locked', 'scale-110'); }, 1500); } els.logCountText.textContent=`${state.logs.length || state.rapCount} RECORDED`; playBeep(880, 0.05); }
-        els.startBtn.onclick=handleStartBtn; els.pauseBtn.onclick=()=>{clearInterval(state.timerInterval); state.isRunning=false; setStatus('PAUSED'); els.startBtn.classList.remove('hidden'); els.pauseBtn.classList.add('hidden');}; els.resetBtn.onclick=resetTimer; els.clearBtn.onclick=resetTimer;
-        function openKeypad(t){ if(state.isRunning)return; keypadTarget=t; inputBuffer=""; els.keypadTitle.textContent=(t==='ROUND')?`SET ROUNDS`:`SET ${t} TIME`; els.keypadDisplay.textContent=(t==='ROUND')?"00":"00:00"; els.keypad.classList.remove('hidden'); setTimeout(()=>els.keypad.classList.remove('translate-y-full'), 10); }
-        els.timerDisplay.onclick=()=>{ if(!state.isRunning&&!state.isPreparing&&(state.mode==='AMRAP'||state.mode==='FORTIME'))openKeypad('TIME'); else if(state.isRunning) recordLog(); };
-        els.roundTrigger.onclick=()=>{if(!state.isRunning&&(state.mode==='TABATA'||state.mode==='EMOM'))openKeypad('ROUND');};
-        els.roundPlus.onclick=(e)=>{e.stopPropagation(); if(!state.isRunning){state.totalRounds++; resetTimer(); playBeep(600,0.05);}};
-        els.roundMinus.onclick=(e)=>{e.stopPropagation(); if(!state.isRunning&&state.totalRounds>1){state.totalRounds--; resetTimer(); playBeep(600,0.05);}};
-        document.getElementById('config-work').onclick=()=>openKeypad('WORK');
-        document.getElementById('config-rest').onclick=()=>openKeypad('REST');
-        document.getElementById('keypad-close').onclick=()=>{els.keypad.classList.add('translate-y-full'); setTimeout(()=>els.keypad.classList.add('hidden'),300);};
-        document.querySelectorAll('.key-num').forEach(b=>{b.onclick=()=>{inputBuffer=(inputBuffer+b.textContent).slice(keypadTarget==='ROUND'?-2:-4); const p=inputBuffer.padStart(keypadTarget==='ROUND'?4:2,'0'); els.keypadDisplay.textContent=(keypadTarget==='ROUND')?p.slice(-2):`${p.substring(0,2)}:${p.substring(2,4)}`; playBeep(600,0.05);};});
-        document.getElementById('key-clear').onclick=()=>{inputBuffer=""; els.keypadDisplay.textContent=(keypadTarget==='ROUND')?"00":"00:00";};
+        function updD(s) { const ms = Math.floor((s%1)*100); els.tD.textContent = `${fmt(s)}.${ms.toString().padStart(2,'0')}`; }
+        function playBeep(f=440, d=0.1, t='square') { if (aCtx.state==='suspended') aCtx.resume(); const o=aCtx.createOscillator(), g=aCtx.createGain(); o.type=t; o.frequency.setValueAtTime(f, aCtx.currentTime); g.gain.setValueAtTime(0.05, aCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, aCtx.currentTime+d); o.connect(g); g.connect(aCtx.destination); o.start(); o.stop(aCtx.currentTime+d); }
+        function playWhistle() { if (aCtx.state==='suspended') aCtx.resume(); const p=(t)=>{const o=aCtx.createOscillator(), g=aCtx.createGain(); o.type='square'; o.frequency.setValueAtTime(150,t); g.gain.setValueAtTime(0.1,t); g.gain.exponentialRampToValueAtTime(0.01,t+0.3); o.connect(g); g.connect(aCtx.destination); o.start(t); o.stop(t+0.3);}; const now=aCtx.currentTime; p(now); p(now+0.4); }
+        function setS(s) { state.status=s; els.sL.textContent=s; if(s==='REST'){document.body.classList.add('bg-rest-mode');}else{document.body.classList.remove('bg-rest-mode');} }
+        function handleStart() { if(state.isRunning||state.isPreparing) return; if(state.status==='READY' && state.isPreCountEnabled) startPre(); else actS(); }
+        function startPre() { state.isPreparing=true; els.pO.classList.remove('hidden'); let c=5; els.pN.textContent=c; playBeep(440); const i=setInterval(()=>{c--; if(c>0){els.pN.textContent=c; playBeep(440);}else{els.pN.textContent="GO"; playWhistle(); clearInterval(i); setTimeout(()=>{els.pO.classList.add('hidden'); state.isPreparing=false; actS();},500);}},1000); }
+        function actS() { state.isRunning=true; reqWL(); tfs(true); if(!state.isPreCountEnabled && state.status==='READY') playWhistle(); if(state.status!=='PAUSED'){ if(state.mode==='TABATA'){state.remainingSeconds=state.tabataWork; state.currentRound=1;} else if(state.mode==='EMOM'){state.remainingSeconds=60; state.currentRound=1;} else if(state.mode==='FORTIME'){state.elapsedSeconds=0; state.lastTouchTime=0;} else {state.remainingSeconds=state.totalSeconds; state.lastTouchTime=state.totalSeconds;} } setS('WORK'); startIntT(); els.stB.classList.add('hidden'); els.psB.classList.remove('hidden'); els.sH.classList.add('hidden'); els.rH.classList.add('hidden'); els.tCf.classList.add('opacity-0'); if(state.mode==='AMRAP'||state.mode==='FORTIME')els.iR.classList.remove('opacity-0'); if(state.mode==='EMOM'||state.mode==='FORTIME'||state.mode==='AMRAP'){els.lC.classList.remove('hidden'); setTimeout(()=>els.lC.classList.remove('opacity-0'),10);} }
+        function startIntT() { const st=Date.now(); const ir=(state.mode==='FORTIME')?state.elapsedSeconds:state.remainingSeconds; state.timerInterval=setInterval(()=>{ const d=(Date.now()-st)/1000; if(state.mode==='FORTIME'){ state.elapsedSeconds=Math.min(state.totalSeconds,ir+d); updD(state.elapsedSeconds); hBp(state.totalSeconds-state.elapsedSeconds); if(state.elapsedSeconds>=state.totalSeconds)fnT(); }else{ state.remainingSeconds=Math.max(0,ir-d); updD(state.remainingSeconds); hBp(state.remainingSeconds); if(state.mode==='TABATA'||state.mode==='EMOM')els.rT.textContent=`ROUND ${state.currentRound.toString().padStart(2,'0')}/${state.totalRounds.toString().padStart(2,'0')}`; if(state.remainingSeconds <= 0)hTr(); } },30); }
+        function hBp(t) { const c=Math.ceil(t); if(c<=3&&c>0&&c!==lSec){ playBeep(state.status==='WORK'?440:660); lSec=c; } }
+        function hTr() { clearInterval(state.timerInterval); if(state.mode!=='TABATA'&&state.mode!=='EMOM'){fnT();} else if(state.mode==='TABATA'){ if(state.status==='WORK'){ if(state.currentRound>=state.totalRounds){fnT();return;} setS('REST'); state.remainingSeconds=state.tabataRest; playBeep(220,0.3); lSec=-1; startIntT(); } else { state.currentRound++; setS('WORK'); state.remainingSeconds=state.tabataWork; playBeep(880,0.3); lSec=-1; startIntT(); } } else if(state.mode==='EMOM'){ if(state.currentRound>=state.totalRounds){fnT();return;} state.currentRound++; setS('WORK'); state.remainingSeconds=60; playWhistle(); lSec=-1; startIntT(); } }
+        function fnT() { clearInterval(state.timerInterval); state.isRunning=false; relWL(); tfs(false); playBeep(110,1.5); updD(state.mode==='FORTIME'?state.totalSeconds:0); els.cB.classList.remove('hidden'); els.psB.classList.add('hidden'); }
+        function resetTimer() { clearInterval(state.timerInterval); state.isRunning=false; state.isPreparing=false; state.currentRound=1; state.rapCount=0; state.elapsedSeconds=0; state.lastTouchTime=0; relWL(); tfs(false); state.remainingSeconds=(state.mode==='TABATA')?state.tabataWork:(state.mode==='EMOM'?60:state.totalSeconds); state.logs=[]; els.lL.innerHTML=''; els.lCT.textContent='0 RECORDED'; els.rCt.textContent="0"; setS('READY'); lSec=-1; const m=Math.floor(state.totalSeconds/60), s=state.totalSeconds%60; els.tGD.textContent=`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; els.tWT.textContent=fmt(state.tabataWork); els.tRT.textContent=fmt(state.tabataRest); if(state.mode==='FORTIME')updD(0); else updD(state.remainingSeconds); els.stB.classList.remove('hidden'); els.psB.classList.add('hidden'); els.sH.classList.remove('hidden'); els.cB.classList.add('hidden'); els.iR.classList.toggle('opacity-0', state.mode==='TABATA'||state.mode==='EMOM'); els.rI.classList.toggle('opacity-0', state.mode!=='TABATA'&&state.mode!=='EMOM'); els.tCf.classList.toggle('hidden', state.mode!=='TABATA'); els.tCf.classList.toggle('opacity-0', state.mode!=='TABATA'); els.lC.classList.add('hidden','opacity-0'); if(state.mode==='TABATA'||state.mode==='EMOM'){els.rH.classList.remove('hidden'); els.rT.textContent=`ROUND 01/${state.totalRounds.toString().padStart(2,'0')}`;} if(state.mode==='FORTIME'){els.rU.textContent='LAPS'; els.rC.classList.remove('hidden'); els.dV.classList.remove('hidden');}else{els.rU.textContent='RAPS';} }
+        function recLog() { if (iTL) return; const now = (state.mode==='FORTIME') ? state.elapsedSeconds : state.remainingSeconds; if(state.mode==='EMOM') { const tt=state.remainingSeconds, actualTaken = 60 - tt, ex=state.logs.findIndex(l=>l.round===state.currentRound); if(ex>-1){state.logs[ex].time=actualTaken; const b=els.lL.querySelector(`[data-round="${state.currentRound}"]`); if(b){b.innerHTML=`<span class="text-white/30 text-[8px]">R${state.currentRound}</span><span>${actualTaken.toFixed(1)}S</span>`; b.classList.remove('animate-pulse'); void b.offsetWidth; b.classList.add('animate-pulse');}} else {state.logs.push({round:state.currentRound, time:actualTaken}); const b=document.createElement('div'); b.setAttribute('data-round',state.currentRound); b.className="bg-white/5 border border-white/10 px-2 py-1 rounded text-[10px] font-black font-mono flex items-baseline gap-1 animate-pulse transition-all"; b.innerHTML=`<span class="text-white/30 text-[8px]">R${state.currentRound}</span><span>${actualTaken.toFixed(1)}S</span>`; els.lL.appendChild(b);} } else { state.rapCount++; els.rCt.textContent=state.rapCount; const gap = Math.abs(now - state.lastTouchTime); state.lastTouchTime = now; const b=document.createElement('div'); b.className="bg-white/5 border border-white/10 px-2 py-1 rounded text-[10px] font-black font-mono flex items-baseline gap-2 animate-pulse transition-all"; const label = (state.mode==='FORTIME') ? 'L' : 'R'; b.innerHTML=`<span class="text-white/30 text-[8px]">${label}${state.rapCount}</span><span>${fmt(now)}</span><span class="text-emerald-500 text-[8px]">+${gap.toFixed(1)}S</span>`; els.lL.prepend(b); iTL = true; els.rC.classList.add('tap-locked', 'scale-110'); setTimeout(() => { iTL = false; els.rC.classList.remove('tap-locked', 'scale-110'); }, 1500); } els.lCT.textContent=`${state.logs.length || state.rapCount} RECORDED`; playBeep(880, 0.05); }
+        els.stB.onclick=handleStart; els.psB.onclick=()=>{clearInterval(state.timerInterval); state.isRunning=false; setS('PAUSED'); els.stB.classList.remove('hidden'); els.psB.classList.add('hidden');}; els.rsB.onclick=resetTimer; els.cB.onclick=resetTimer;
+        function opK(t){ if(state.isRunning)return; keypadTarget=t; inputBuffer=""; els.kT.textContent=(t==='ROUND')?`SET ROUNDS`:`SET ${t} TIME`; els.kD.textContent=(t==='ROUND')?"00":"00:00"; els.kP.classList.remove('hidden'); setTimeout(()=>els.kP.classList.remove('translate-y-full'), 10); }
+        els.tD.onclick=()=>{ if(!state.isRunning&&!state.isPreparing&&(state.mode==='AMRAP'||state.mode==='FORTIME'))opK('TIME'); else if(state.isRunning) recLog(); };
+        els.rTg.onclick=()=>{if(!state.isRunning&&(state.mode==='TABATA'||state.mode==='EMOM'))opK('ROUND');};
+        els.rP.onclick=(e)=>{e.stopPropagation(); if(!state.isRunning){state.totalRounds++; resetTimer(); playBeep(600,0.05);}};
+        els.rM.onclick=(e)=>{e.stopPropagation(); if(!state.isRunning&&state.totalRounds>1){state.totalRounds--; resetTimer(); playBeep(600,0.05);}};
+        document.getElementById('config-work').onclick=()=>opK('WORK');
+        document.getElementById('config-rest').onclick=()=>opK('REST');
+        document.getElementById('keypad-close').onclick=()=>{els.kP.classList.add('translate-y-full'); setTimeout(()=>els.kP.classList.add('hidden'),300);};
+        document.querySelectorAll('.key-num').forEach(b=>{b.onclick=()=>{inputBuffer=(inputBuffer+b.textContent).slice(keypadTarget==='ROUND'?-2:-4); const p=inputBuffer.padStart(keypadTarget==='ROUND'?4:2,'0'); els.kD.textContent=(keypadTarget==='ROUND')?p.slice(-2):`${p.substring(0,2)}:${p.substring(2,4)}`; playBeep(600,0.05);};});
+        document.getElementById('key-clear').onclick=()=>{inputBuffer=""; els.kD.textContent=(keypadTarget==='ROUND')?"00":"00:00";};
         document.getElementById('key-done').onclick=()=>{const p=inputBuffer.padStart(4, '0'); if(keypadTarget==='ROUND'){const r=parseInt(p.slice(-2)); if(r>0){state.totalRounds=r; resetTimer(); document.getElementById('keypad-close').onclick();}}else{const t=(parseInt(p.substring(0,2))*60)+parseInt(p.substring(2,4)); if(t>0){if(keypadTarget==='WORK')state.tabataWork=t; else if(keypadTarget==='REST')state.tabataRest=t; else state.totalSeconds=t; resetTimer(); document.getElementById('keypad-close').onclick();}}};
-        Object.entries(els.modeBtns).forEach(([m,b])=>{b.onclick=()=>{if(state.isRunning||state.isPreparing)return; Object.values(els.mBs).forEach(x=>{x.classList.remove('bg-emerald-500','text-black'); x.classList.add('text-white/40');}); b.classList.add('bg-emerald-500','text-black'); b.classList.remove('text-white/40'); state.mode=m; resetTimer();};});
+        Object.entries(els.mBs).forEach(([m,b])=>{b.onclick=()=>{if(state.isRunning||state.isPreparing)return; Object.values(els.mBs).forEach(x=>{x.classList.remove('bg-emerald-500','text-black'); x.classList.add('text-white/40');}); b.classList.add('bg-emerald-500','text-black'); b.classList.remove('text-white/40'); state.mode=m; resetTimer();};});
         resetTimer();
     </script>
 </body>
