@@ -19,7 +19,7 @@
             overflow: hidden; transition: background-color 0.4s ease; 
             height: 100dvh; display: flex; flex-direction: column;
         }
-        main { height: 100%; display: flex; flex-direction: column; }
+        main { height: 100%; display: flex; flex-direction: column; padding: 1rem; }
         .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
         .italic { font-style: italic; } .uppercase { text-transform: uppercase; } .hidden { display: none !important; }
         @keyframes pulse-custom { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
@@ -30,132 +30,109 @@
         .log-scroll::-webkit-scrollbar { display: none; }
         
         #timer-display { 
-            cursor: pointer;
-            transition: transform 0.1s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            cursor: pointer; transition: transform 0.1s;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
         #main-time { 
-            font-size: min(35vw, 22vh); 
-            line-height: 0.8; 
-            letter-spacing: -0.05em;
-            font-weight: 900;
+            font-size: min(35vw, 24vh); line-height: 0.8; letter-spacing: -0.05em; font-weight: 900;
             filter: drop-shadow(0 0 30px rgba(255,255,255,0.1));
         }
         #ms-time { 
-            font-size: min(8vw, 5vh); 
-            opacity: 0.3; 
-            font-weight: 700;
-            margin-top: 0.5rem;
-            letter-spacing: 0.1em;
+            font-size: min(8vw, 5vh); opacity: 0.3; font-weight: 700; margin-top: 0.2rem; letter-spacing: 0.1em;
         }
+        .dash-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 1.25rem; padding: 0.75rem; }
     </style>
 </head>
 <body class="bg-zinc-950 text-white italic uppercase text-center">
     <div id="pre-countdown-overlay" class="fixed inset-0 z-[100] flex flex-col items-center justify-center hidden bg-yellow-500/95 text-center text-black">
-        <span class="text-black font-black text-2xl tracking-[0.5em] mb-8 uppercase text-center">Preparing</span>
-        <span id="pre-countdown-number" class="text-[50vw] font-black text-black leading-none tabular-nums text-center">5</span>
+        <span class="text-black font-black text-2xl tracking-[0.5em] mb-8 uppercase">Preparing</span>
+        <span id="pre-countdown-number" class="text-[50vw] font-black text-black leading-none tabular-nums">5</span>
     </div>
 
-    <main class="relative z-10 flex-1 flex flex-col p-4 backdrop-blur-[2px]">
-        <header class="flex justify-between items-center mb-4 border-b border-white/5 pb-2 text-left">
-            <div class="flex items-center gap-3">
-                <div class="flex items-baseline gap-1">
-                    <span class="text-2xl font-black tracking-tighter text-white">CFGN</span><span class="text-2xl font-black tracking-tighter text-emerald-500">.SS</span>
+    <main class="relative z-10 flex-1 flex flex-col backdrop-blur-[2px]">
+        <div class="shrink-0">
+            <header class="flex justify-between items-center mb-3 border-b border-white/5 pb-2 text-left">
+                <div class="flex items-center gap-3 text-left">
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-xl font-black tracking-tighter text-white">CFGN</span><span class="text-xl font-black tracking-tighter text-emerald-500">.SS</span>
+                    </div>
+                    <div class="h-3 w-[1px] bg-white/10"></div>
+                    <div class="flex flex-col leading-none text-left">
+                        <span class="text-[8px] text-white/60 font-black tracking-wider">BY C.JIN</span>
+                        <span class="text-[6px] text-white/20 font-bold">VER 1.1</span>
+                    </div>
                 </div>
-                <div class="h-4 w-[1px] bg-white/10"></div>
-                <div class="flex flex-col leading-none">
-                    <span class="text-[9px] text-white/60 font-black tracking-wider">BY C.JIN</span>
-                    <span class="text-[7px] text-white/20 font-bold">VER 1.1</span>
+                <div id="pre-count-toggle" class="flex items-center gap-2 cursor-pointer group text-right">
+                    <span class="text-[7px] text-white/30 font-black tracking-widest uppercase">Pre-Count</span>
+                    <div class="w-10 h-5 bg-emerald-500/20 rounded-full p-0.5 relative border border-white/5" id="toggle-bg">
+                        <div class="w-4 h-4 bg-emerald-500 rounded-full transition-transform duration-300 transform translate-x-5 shadow-xl" id="toggle-dot"></div>
+                    </div>
                 </div>
-            </div>
-            <div id="pre-count-toggle" class="flex items-center gap-2 cursor-pointer group">
-                <span class="text-[7px] text-white/30 font-black tracking-widest uppercase">Pre-Count</span>
-                <div class="w-10 h-5 bg-emerald-500/20 rounded-full p-0.5 relative border border-white/5" id="toggle-bg">
-                    <div class="w-4 h-4 bg-emerald-500 rounded-full transition-transform duration-300 transform translate-x-5 shadow-xl" id="toggle-dot"></div>
-                </div>
-            </div>
-        </header>
+            </header>
+            <nav class="grid grid-cols-4 gap-1 mb-4 bg-white/5 p-1 rounded-xl border border-white/5 text-center">
+                <button id="mode-amrap" class="py-2 rounded-lg text-[8px] font-black tracking-widest bg-emerald-500 text-black transition-all">AMRAP</button>
+                <button id="mode-fortime" class="py-2 rounded-lg text-[8px] font-black tracking-widest text-white/40 transition-all">FOR TIME</button>
+                <button id="mode-tabata" class="py-2 rounded-lg text-[8px] font-black tracking-widest text-white/40 transition-all">TABATA</button>
+                <button id="mode-emom" class="py-2 rounded-lg text-[8px] font-black tracking-widest text-white/40 transition-all">EMOM</button>
+            </nav>
+        </div>
 
-        <nav class="grid grid-cols-4 gap-1 mb-4 bg-white/5 p-1 rounded-xl border border-white/5 shrink-0">
-            <button id="mode-amrap" class="py-2 rounded-lg text-[8px] font-black tracking-widest bg-emerald-500 text-black transition-all">AMRAP</button>
-            <button id="mode-fortime" class="py-2 rounded-lg text-[8px] font-black tracking-widest text-white/40 transition-all">FOR TIME</button>
-            <button id="mode-tabata" class="py-2 rounded-lg text-[8px] font-black tracking-widest text-white/40 transition-all">TABATA</button>
-            <button id="mode-emom" class="py-2 rounded-lg text-[8px] font-black tracking-widest text-white/40 transition-all">EMOM</button>
-        </nav>
-
-        <section class="flex-1 flex flex-col items-center justify-center relative min-h-0 text-center">
-            <div id="status-label" class="text-emerald-400 text-lg font-black tracking-[0.4em] mb-4 transition-colors duration-300 uppercase text-center">READY</div>
-            
-            <div id="timer-display" class="font-mono tabular-nums text-white active:scale-95">
+        <section class="flex-1 flex flex-col items-center justify-center relative min-h-0 pt-2 text-center">
+            <div id="status-label" class="text-emerald-400 text-base font-black tracking-[0.4em] mb-4 transition-colors duration-300 uppercase">READY</div>
+            <div id="timer-display" class="font-mono tabular-nums text-white active:scale-95 text-center">
                 <span id="main-time">05:00</span>
                 <span id="ms-time">.00</span>
             </div>
-
-            <div id="setup-hint" class="mt-6 text-[9px] text-white/20 font-bold tracking-[0.3em] uppercase text-center">Tap To Set Time</div>
-            
-            <div id="tabata-config" class="mt-6 flex items-center justify-center gap-12 opacity-0 transition-all hidden">
-                <div id="config-work" class="flex flex-col items-center cursor-pointer active:scale-95 text-center">
+            <div id="setup-hint" class="mt-4 text-[8px] text-white/20 font-bold tracking-[0.3em] uppercase">Tap To Set Time</div>
+            <div id="tabata-config" class="mt-4 flex items-center justify-center gap-10 opacity-0 transition-all hidden text-center">
+                <div id="config-work" class="flex flex-col items-center cursor-pointer active:scale-95">
                     <span class="text-[8px] text-emerald-500 font-black tracking-[0.3em] mb-1 uppercase">WORK</span>
-                    <span id="tabata-work-text" class="text-4xl font-black text-white font-mono">00:20</span>
+                    <span id="tabata-work-text" class="text-3xl font-black text-white font-mono text-center">00:20</span>
                 </div>
-                <div class="h-10 w-[1px] bg-white/10 text-center"></div>
-                <div id="config-rest" class="flex flex-col items-center cursor-pointer active:scale-95 text-center">
+                <div class="h-8 w-[1px] bg-white/10 text-center"></div>
+                <div id="config-rest" class="flex flex-col items-center cursor-pointer active:scale-95">
                     <span class="text-[8px] text-red-500 font-black tracking-[0.3em] mb-1 uppercase">REST</span>
-                    <span id="tabata-rest-text" class="text-4xl font-black text-white/60 font-mono">00:10</span>
+                    <span id="tabata-rest-text" class="text-3xl font-black text-white/60 font-mono text-center">00:10</span>
                 </div>
             </div>
-
-            <div id="info-row" class="mt-6 flex items-center justify-center gap-10 opacity-0 transition-all text-center">
-                <div id="record-col" class="flex flex-col items-center transition-all text-center">
-                    <span id="record-label" class="text-[9px] text-emerald-500/60 font-black tracking-[0.3em] mb-1 uppercase text-center">Record</span>
-                    <div class="flex items-baseline gap-1"><span id="rap-count" class="text-7xl font-black text-white tabular-nums">0</span><span id="record-unit" class="text-xs font-black text-white/20 uppercase">Raps</span></div>
-                </div>
-                <div id="divider-col" class="h-12 w-[1px] bg-white/10 text-center"></div>
-                <div class="flex flex-col items-center text-center text-center">
-                    <span id="cap-label" class="text-[9px] text-white/30 font-black tracking-[0.3em] mb-1 uppercase text-center">Time Cap</span>
-                    <span id="target-display" class="text-3xl font-black text-white/60 font-mono text-center">05:00</span>
-                </div>
-            </div>
-
-            <div id="log-container" class="mt-6 w-full max-w-[320px] hidden opacity-0 transition-all duration-500 text-center text-center">
-                <div id="log-list" class="log-scroll flex flex-wrap gap-2 justify-center max-h-[100px] overflow-y-auto pb-4"></div>
-            </div>
-
-            <div id="round-info" class="mt-6 flex flex-col items-center opacity-0 transition-all text-center text-center">
-                <div class="flex items-center gap-8 justify-center text-center">
-                    <button id="round-minus" class="w-12 h-12 rounded-full bg-white/5 border border-white/5 flex items-center justify-center text-2xl font-black active:scale-90 text-center">-</button>
-                    <div id="round-setup-trigger" class="flex flex-col items-center cursor-pointer active:scale-95 min-w-[160px] text-center">
-                        <span id="round-text" class="text-white text-4xl font-black tracking-widest italic text-center text-center">Round 01/08</span>
-                        <span class="text-[8px] text-white/20 font-bold tracking-[0.2em] uppercase text-center">Set Rounds</span>
-                    </div>
-                    <button id="round-plus" class="w-12 h-12 rounded-full bg-white/5 border border-white/5 flex items-center justify-center text-2xl font-black active:scale-90 text-center">+</button>
-                </div>
-            </div>
-
-            <button id="clear-btn" class="absolute inset-0 z-40 bg-emerald-500 text-black font-black text-6xl italic flex items-center justify-center animate-pulse-custom hidden uppercase text-center">Clear</button>
         </section>
 
-        <footer class="grid grid-cols-3 gap-4 mt-auto pb-4 shrink-0 text-center">
-            <button id="reset-btn" class="bg-zinc-900 border border-white/5 py-8 rounded-[2.5rem] flex items-center justify-center active:scale-90 transition-all text-center text-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg></button>
-            <button id="start-btn" class="col-span-2 bg-emerald-500 text-black font-black text-4xl py-8 rounded-[2.5rem] active:scale-95 transition-all uppercase w-full text-center">Start</button>
-            <button id="pause-btn" class="hidden col-span-2 bg-white text-black font-black text-4xl py-8 rounded-[2.5rem] active:scale-95 transition-all uppercase w-full text-center">Pause</button>
-        </footer>
+        <div class="shrink-0 mt-2 space-y-3">
+            <div class="grid grid-cols-2 gap-2 text-center">
+                <div id="info-row" class="dash-box flex flex-col items-center transition-all opacity-0">
+                    <span class="text-[8px] font-black tracking-widest text-white/30 mb-1">RECORD</span>
+                    <div class="flex items-baseline gap-1"><span id="rap-count" class="text-4xl font-black text-emerald-500 tabular-nums">0</span><span id="record-unit" class="text-[8px] font-black text-white/20">RAPS</span></div>
+                </div>
+                <div id="round-info" class="dash-box flex flex-col items-center transition-all opacity-0">
+                    <span class="text-[8px] font-black tracking-widest text-white/30 mb-1">ROUND</span>
+                    <div class="flex items-center gap-3">
+                        <button id="round-minus" class="w-7 h-7 rounded-full bg-white/5 flex items-center justify-center text-sm font-black active:scale-90">-</button>
+                        <div id="round-setup-trigger" class="cursor-pointer text-center"><span id="round-text" class="text-xl font-black tabular-nums text-center">01/08</span></div>
+                        <button id="round-plus" class="w-7 h-7 rounded-full bg-white/5 flex items-center justify-center text-sm font-black active:scale-90">+</button>
+                    </div>
+                </div>
+            </div>
+            <div id="log-container" class="w-full hidden opacity-0 transition-all duration-500 h-10 overflow-hidden text-center">
+                <div id="log-list" class="log-scroll flex gap-2 overflow-x-auto whitespace-nowrap pb-2 justify-center"></div>
+            </div>
+            <footer class="grid grid-cols-3 gap-3 pb-2 text-center">
+                <button id="reset-btn" class="bg-zinc-900 border border-white/5 py-6 rounded-[2rem] flex items-center justify-center active:scale-90 transition-all text-center text-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg></button>
+                <button id="start-btn" class="col-span-2 bg-emerald-500 text-black font-black text-2xl py-6 rounded-[2rem] active:scale-95 transition-all uppercase w-full">Start</button>
+                <button id="pause-btn" class="hidden col-span-2 bg-white text-black font-black text-2xl py-6 rounded-[2rem] active:scale-95 transition-all uppercase w-full">Pause</button>
+            </footer>
+        </div>
+        <button id="clear-btn" class="fixed inset-0 z-[120] bg-emerald-500 text-black font-black text-6xl italic flex items-center justify-center animate-pulse-custom hidden uppercase">Clear</button>
     </main>
 
     <div id="keypad-overlay" class="fixed inset-0 z-[110] bg-zinc-950 flex flex-col p-6 translate-y-full transition-transform duration-300 hidden text-center">
-        <header class="flex justify-between items-center mb-8 text-left text-center"><span id="keypad-title" class="text-emerald-500 font-black tracking-widest uppercase text-left text-center">Set Time</span><button id="keypad-close" class="text-white/40 font-bold text-sm underline tracking-widest uppercase text-center">Cancel</button></header>
-        <div class="flex-1 flex flex-col justify-center text-center">
-            <div class="bg-white/5 rounded-3xl p-10 mb-12 border border-white/5 shadow-2xl text-center">
-                <div id="keypad-display" class="text-8xl font-black font-mono text-center text-white tabular-nums text-center">05:00</div>
-            </div>
-            <div class="grid grid-cols-3 gap-4 max-w-sm mx-auto w-full text-center">
-                <button class="key-num bg-white/5 py-7 rounded-3xl text-4xl font-black active:bg-emerald-500 active:text-black transition-all text-center">1</button><button class="key-num bg-white/5 py-7 rounded-3xl text-4xl font-black active:bg-emerald-500 active:text-black transition-all text-center">2</button><button class="key-num bg-white/5 py-7 rounded-3xl text-4xl font-black active:bg-emerald-500 active:text-black transition-all text-center">3</button>
-                <button class="key-num bg-white/5 py-7 rounded-3xl text-4xl font-black active:bg-emerald-500 active:text-black text-center">4</button><button class="key-num bg-white/5 py-7 rounded-3xl text-4xl font-black active:bg-emerald-500 active:text-black text-center">5</button><button class="key-num bg-white/5 py-7 rounded-3xl text-4xl font-black active:bg-emerald-500 active:text-black text-center">6</button>
-                <button class="key-num bg-white/5 py-7 rounded-3xl text-4xl font-black active:bg-emerald-500 active:text-black text-center text-center">7</button><button class="key-num bg-white/5 py-7 rounded-3xl text-4xl font-black active:bg-emerald-500 active:text-black text-center text-center">8</button><button class="key-num bg-white/5 py-7 rounded-3xl text-4xl font-black active:bg-emerald-500 active:text-black text-center text-center">9</button>
-                <button id="key-clear" class="bg-red-500/10 text-red-500 py-7 rounded-3xl text-2xl font-black text-center">CLR</button><button class="key-num bg-white/5 py-7 rounded-3xl text-4xl font-black active:bg-emerald-500 active:text-black text-center">0</button><button id="key-done" class="bg-emerald-500 text-black py-7 rounded-3xl text-2xl font-black active:scale-95 uppercase text-center">Set</button>
+        <header class="flex justify-between items-center mb-8 border-b border-white/10 pb-4 text-left"><span id="keypad-title" class="text-emerald-500 font-black tracking-widest uppercase">Set Time</span><button id="keypad-close" class="text-white/40 font-bold text-sm underline tracking-widest uppercase text-center">Cancel</button></header>
+        <div class="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full text-center">
+            <div class="bg-white/5 rounded-3xl p-8 mb-8 border border-white/5 shadow-2xl text-center"><div id="keypad-display" class="text-7xl font-black font-mono text-center text-white tabular-nums">05:00</div></div>
+            <div class="grid grid-cols-3 gap-3 text-center">
+                <button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black text-center">1</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black text-center">2</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black text-center">3</button>
+                <button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black text-center">4</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black text-center">5</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black text-center">6</button>
+                <button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black text-center">7</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black text-center text-center">8</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black text-center text-center">9</button>
+                <button id="key-clear" class="bg-red-500/10 text-red-500 py-6 rounded-2xl text-xl font-black text-center">CLR</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black text-center">0</button><button id="key-done" class="bg-emerald-500 text-black py-6 rounded-2xl text-xl font-black active:scale-95 uppercase text-center">Set</button>
             </div>
         </div>
     </div>
@@ -189,13 +166,13 @@
         function setS(s) { state.status=s; els.sL.textContent=s; if(s==='REST'){document.body.classList.add('bg-rest-mode');}else{document.body.classList.remove('bg-rest-mode');} }
         function handleStart() { if(state.isRunning||state.isPreparing) return; if(state.status==='READY' && state.isPreCountEnabled) startPre(); else actS(); }
         function startPre() { state.isPreparing=true; els.pO.classList.remove('hidden'); let c=5; els.pN.textContent=c; playBeep(440); const i=setInterval(()=>{c--; if(c>0){els.pN.textContent=c; playBeep(440);}else{els.pN.textContent="GO"; playWhistle(); clearInterval(i); setTimeout(()=>{els.pO.classList.add('hidden'); state.isPreparing=false; actS();},500);}},1000); }
-        function actS() { state.isRunning=true; reqWL(); if(!state.isPreCountEnabled && state.status==='READY') playWhistle(); if(state.status!=='PAUSED'){ if(state.mode==='TABATA'){state.remainingSeconds=state.tabataWork; state.currentRound=1;} else if(state.mode==='EMOM'){state.remainingSeconds=60; state.currentRound=1;} else if(state.mode==='FORTIME'){state.elapsedSeconds=0; state.lastTouchTime=0;} else {state.remainingSeconds=state.totalSeconds; state.lastTouchTime=state.totalSeconds;} } setS('WORK'); startIntT(); els.stB.classList.add('hidden'); els.psB.classList.remove('hidden'); els.sH.classList.add('hidden'); els.tCf.classList.add('opacity-0'); if(state.mode==='AMRAP'||state.mode==='FORTIME')els.iR.classList.remove('opacity-0'); if(state.mode==='EMOM'||state.mode==='FORTIME'||state.mode==='AMRAP'){els.lC.classList.remove('hidden'); setTimeout(()=>els.lC.classList.remove('opacity-0'),10);} }
-        function startIntT() { const st=Date.now(); const ir=(state.mode==='FORTIME')?state.elapsedSeconds:state.remainingSeconds; state.timerInterval=setInterval(()=>{ const d=(Date.now()-st)/1000; if(state.mode==='FORTIME'){ state.elapsedSeconds=Math.min(state.totalSeconds,ir+d); updD(state.elapsedSeconds); hBp(state.totalSeconds-state.elapsedSeconds); if(state.elapsedSeconds>=state.totalSeconds)fnT(); }else{ state.remainingSeconds=Math.max(0,ir-d); updD(state.remainingSeconds); hBp(state.remainingSeconds); if(state.mode==='TABATA'||state.mode==='EMOM')els.rT.textContent=`ROUND ${state.currentRound.toString().padStart(2,'0')}/${state.totalRounds.toString().padStart(2,'0')}`; if(state.remainingSeconds <= 0)hTr(); } },30); }
+        function actS() { state.isRunning=true; reqWL(); if(!state.isPreCountEnabled && state.status==='READY') playWhistle(); if(state.status!=='PAUSED'){ if(state.mode==='TABATA'){state.remainingSeconds=state.tabataWork; state.currentRound=1;} else if(state.mode==='EMOM'){state.remainingSeconds=60; state.currentRound=1;} else if(state.mode==='FORTIME'){state.elapsedSeconds=0; state.lastTouchTime=0;} else {state.remainingSeconds=state.totalSeconds; state.lastTouchTime=state.totalSeconds;} } setS('WORK'); startIntT(); els.stB.classList.add('hidden'); els.psB.classList.remove('hidden'); els.sH.classList.add('hidden'); els.tCf.classList.add('opacity-0'); els.iR.classList.remove('opacity-0'); els.rI.classList.remove('opacity-0'); if(state.mode==='EMOM'||state.mode==='FORTIME'||state.mode==='AMRAP'){els.lC.classList.remove('hidden'); setTimeout(()=>els.lC.classList.remove('opacity-0'),10);} }
+        function startIntT() { const st=Date.now(); const ir=(state.mode==='FORTIME')?state.elapsedSeconds:state.remainingSeconds; state.timerInterval=setInterval(()=>{ const d=(Date.now()-st)/1000; if(state.mode==='FORTIME'){ state.elapsedSeconds=Math.min(state.totalSeconds,ir+d); updD(state.elapsedSeconds); hBp(state.totalSeconds-state.elapsedSeconds); if(state.elapsedSeconds>=state.totalSeconds)fnT(); }else{ state.remainingSeconds=Math.max(0,ir-d); updD(state.remainingSeconds); hBp(state.remainingSeconds); if(state.mode==='TABATA'||state.mode==='EMOM')els.rT.textContent=`${state.currentRound.toString().padStart(2,'0')}/${state.totalRounds.toString().padStart(2,'0')}`; if(state.remainingSeconds <= 0)hTr(); } },30); }
         function hBp(t) { const c=Math.ceil(t); if(c<=3&&c>0&&c!==lSec){ playBeep(state.status==='WORK'?440:660); lSec=c; } }
         function hTr() { clearInterval(state.timerInterval); if(state.mode!=='TABATA'&&state.mode!=='EMOM'){fnT();} else if(state.mode==='TABATA'){ if(state.status==='WORK'){ if(state.currentRound>=state.totalRounds){fnT();return;} setS('REST'); state.remainingSeconds=state.tabataRest; playBeep(220,0.3); lSec=-1; startIntT(); } else { state.currentRound++; setS('WORK'); state.remainingSeconds=state.tabataWork; playBeep(880,0.3); lSec=-1; startIntT(); } } else if(state.mode==='EMOM'){ if(state.currentRound>=state.totalRounds){fnT();return;} state.currentRound++; setS('WORK'); state.remainingSeconds=60; playWhistle(); lSec=-1; startIntT(); } }
         function fnT() { clearInterval(state.timerInterval); state.isRunning=false; relWL(); playBeep(110,1.5); updD(state.mode==='FORTIME'?state.totalSeconds:0); els.cB.classList.remove('hidden'); els.psB.classList.add('hidden'); }
-        function resetTimer() { clearInterval(state.timerInterval); state.isRunning=false; state.isPreparing=false; state.currentRound=1; state.rapCount=0; state.elapsedSeconds=0; state.lastTouchTime=0; relWL(); state.remainingSeconds=(state.mode==='TABATA')?state.tabataWork:(state.mode==='EMOM'?60:state.totalSeconds); state.logs=[]; els.lL.innerHTML=''; els.rCt.textContent="0"; setS('READY'); lSec=-1; const m=Math.floor(state.totalSeconds/60), s=state.totalSeconds%60; els.tGD.textContent=`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; els.tWT.textContent=fmt(state.tabataWork); els.tRT.textContent=fmt(state.tabataRest); if(state.mode==='FORTIME')updD(0); else updD(state.remainingSeconds); els.stB.classList.remove('hidden'); els.psB.classList.add('hidden'); els.sH.classList.remove('hidden'); els.cB.classList.add('hidden'); els.iR.classList.toggle('opacity-0', state.mode==='TABATA'||state.mode==='EMOM'); els.rI.classList.toggle('opacity-0', state.mode!=='TABATA'&&state.mode!=='EMOM'); els.tCf.classList.toggle('hidden', state.mode!=='TABATA'); els.tCf.classList.toggle('opacity-0', state.mode!=='TABATA'); els.lC.classList.add('hidden','opacity-0'); if(state.mode==='TABATA'||state.mode==='EMOM'){els.rT.textContent=`ROUND 01/${state.totalRounds.toString().padStart(2,'0')}`;} if(state.mode==='FORTIME'){els.rU.textContent='LAPS';}else{els.rU.textContent='RAPS';} }
-        function recLog() { if (iTL) return; const now = (state.mode==='FORTIME') ? state.elapsedSeconds : state.remainingSeconds; if(state.mode==='EMOM') { const tt=state.remainingSeconds, actualTaken = 60 - tt, ex=state.logs.findIndex(l=>l.round===state.currentRound); if(ex>-1){state.logs[ex].time=actualTaken; const b=els.lL.querySelector(`[data-round="${state.currentRound}"]`); if(b){b.innerHTML=`<span class="text-white/30 text-[8px]">R${state.currentRound}</span><span>${actualTaken.toFixed(1)}S</span>`;}} else {state.logs.push({round:state.currentRound, time:actualTaken}); const b=document.createElement('div'); b.setAttribute('data-round',state.currentRound); b.className="bg-white/5 border border-white/10 px-2 py-1 rounded text-[10px] font-black font-mono flex items-baseline gap-1 animate-pulse transition-all"; b.innerHTML=`<span class="text-white/30 text-[8px]">R${state.currentRound}</span><span>${actualTaken.toFixed(1)}S</span>`; els.lL.prepend(b);} } else { state.rapCount++; els.rCt.textContent=state.rapCount; const gap = Math.abs(now - state.lastTouchTime); state.lastTouchTime = now; const b=document.createElement('div'); b.className="bg-white/5 border border-white/10 px-2 py-1 rounded text-[10px] font-black font-mono flex items-baseline gap-2 animate-pulse transition-all"; const label = (state.mode==='FORTIME') ? 'L' : 'R'; b.innerHTML=`<span class="text-white/30 text-[8px]">${label}${state.rapCount}</span><span>${fmt(now)}</span><span class="text-emerald-500 text-[8px]">+${gap.toFixed(1)}S</span>`; els.lL.prepend(b); iTL = true; els.rCt.parentElement.classList.add('tap-locked', 'scale-110'); setTimeout(() => { iTL = false; els.rCt.parentElement.classList.remove('tap-locked', 'scale-110'); }, 1500); } playBeep(880, 0.05); }
+        function resetTimer() { clearInterval(state.timerInterval); state.isRunning=false; state.isPreparing=false; state.currentRound=1; state.rapCount=0; state.elapsedSeconds=0; state.lastTouchTime=0; relWL(); state.remainingSeconds=(state.mode==='TABATA')?state.tabataWork:(state.mode==='EMOM'?60:state.totalSeconds); state.logs=[]; els.lL.innerHTML=''; els.rCt.textContent="0"; setS('READY'); lSec=-1; const m=Math.floor(state.totalSeconds/60), s=state.totalSeconds%60; els.tGD.textContent=`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; els.tWT.textContent=fmt(state.tabataWork); els.tRT.textContent=fmt(state.tabataRest); if(state.mode==='FORTIME')updD(0); else updD(state.remainingSeconds); els.stB.classList.remove('hidden'); els.psB.classList.add('hidden'); els.sH.classList.remove('hidden'); els.cB.classList.add('hidden'); els.iR.classList.toggle('opacity-0', state.mode==='TABATA'||state.mode==='EMOM'); els.rI.classList.toggle('opacity-0', state.mode!=='TABATA'&&state.mode!=='EMOM'); els.tCf.classList.toggle('hidden', state.mode!=='TABATA'); els.tCf.classList.toggle('opacity-0', state.mode!=='TABATA'); els.lC.classList.add('hidden','opacity-0'); if(state.mode==='TABATA'||state.mode==='EMOM'){els.rT.textContent=`01/${state.totalRounds.toString().padStart(2,'0')}`;} if(state.mode==='FORTIME'){els.rU.textContent='LAPS';}else{els.rU.textContent='RAPS';} }
+        function recLog() { if (iTL) return; const now = (state.mode==='FORTIME') ? state.elapsedSeconds : state.remainingSeconds; if(state.mode==='EMOM') { const tt=state.remainingSeconds, actualTaken = 60 - tt, ex=state.logs.findIndex(l=>l.round===state.currentRound); if(ex>-1){state.logs[ex].time=actualTaken; const b=els.lL.querySelector(`[data-round="${state.currentRound}"]`); if(b){b.innerHTML=`<span class="text-white/30 text-[8px]">R${state.currentRound}</span><span>${actualTaken.toFixed(1)}S</span>`;}} else {state.logs.push({round:state.currentRound, time:actualTaken}); const b=document.createElement('div'); b.setAttribute('data-round',state.currentRound); b.className="bg-white/10 px-3 py-2 rounded-xl text-[10px] font-black font-mono flex items-baseline gap-1 border border-white/5"; b.innerHTML=`<span class="text-white/30 text-[8px]">R${state.currentRound}</span><span>${actualTaken.toFixed(1)}S</span>`; els.lL.prepend(b);} } else { state.rapCount++; els.rCt.textContent=state.rapCount; const gap = Math.abs(now - state.lastTouchTime); state.lastTouchTime = now; const b=document.createElement('div'); b.className="bg-white/10 px-3 py-2 rounded-xl text-[10px] font-black font-mono flex items-baseline gap-2 animate-pulse border border-white/5"; const label = (state.mode==='FORTIME') ? 'L' : 'R'; b.innerHTML=`<span class="text-white/30 text-[8px]">${label}${state.rapCount}</span><span>${fmt(now)}</span><span class="text-emerald-500 text-[8px]">+${gap.toFixed(1)}S</span>`; els.lL.prepend(b); iTL = true; els.rCt.parentElement.parentElement.classList.add('tap-locked'); setTimeout(() => { iTL = false; els.rCt.parentElement.parentElement.classList.remove('tap-locked'); }, 1500); } playBeep(880, 0.05); }
         els.stB.onclick=handleStart; els.psB.onclick=()=>{clearInterval(state.timerInterval); state.isRunning=false; setS('PAUSED'); els.stB.classList.remove('hidden'); els.psB.classList.add('hidden');}; els.rsB.onclick=resetTimer; els.cB.onclick=resetTimer;
         function opK(t){ if(state.isRunning)return; kpT=t; inB=""; els.kT.textContent=(t==='ROUND')?`SET ROUNDS`:`SET ${t} TIME`; els.kD.textContent=(t==='ROUND')?"00":"00:00"; els.kP.classList.remove('hidden'); setTimeout(()=>els.kP.classList.remove('translate-y-full'), 10); }
         els.tD.onclick=()=>{ if(!state.isRunning&&!state.isPreparing&&(state.mode==='AMRAP'||state.mode==='FORTIME'))opK('TIME'); else if(state.isRunning) recLog(); };
