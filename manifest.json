@@ -1,0 +1,23 @@
+{
+  "name": "C.JIN CrossTimer",
+  "short_name": "C.JIN Timer",
+  "description": "Professional CrossFit Timer by C.JIN",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#10b981",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://cdn.pixabay.com/photo/2016/03/31/14/37/check-mark-1292787_1280.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://cdn.pixabay.com/photo/2016/03/31/14/37/check-mark-1292787_1280.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

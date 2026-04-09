@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* 타이머 숫자 더 강렬하게 */
+#timer-display {
+  text-shadow: 
+    0 0 40px rgb(16 185 129),
+    0 0 80px rgb(16 185 129);
+}
