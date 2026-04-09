@@ -41,29 +41,27 @@
             font-size: min(8vw, 5vh); opacity: 0.3; font-weight: 700; margin-top: 0.2rem; letter-spacing: 0.1em;
         }
         .dash-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 1.25rem; padding: 0.75rem; }
-        
-        /* 고정 라인을 위한 높이 설정 */
         .status-slot { height: 2rem; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
         .metric-slot { height: 6rem; display: flex; align-items: center; justify-content: center; margin-top: 1rem; }
     </style>
 </head>
 <body class="bg-zinc-950 text-white italic uppercase text-center">
-    <div id="pre-countdown-overlay" class="fixed inset-0 z-[100] flex flex-col items-center justify-center hidden bg-yellow-500/95 text-center text-black text-center">
-        <span class="text-black font-black text-2xl tracking-[0.5em] mb-8 uppercase">Preparing</span>
+    <div id="pre-countdown-overlay" class="fixed inset-0 z-[100] flex flex-col items-center justify-center hidden bg-yellow-500/95 text-center text-black">
+        <span class="text-black font-black text-2xl tracking-[0.5em] mb-8 uppercase text-center">Preparing</span>
         <span id="pre-countdown-number" class="text-[50vw] font-black text-black leading-none tabular-nums text-center">5</span>
     </div>
 
     <main class="relative z-10 flex-1 flex flex-col backdrop-blur-[2px]">
         <div class="shrink-0">
             <header class="flex justify-between items-center mb-3 border-b border-white/5 pb-2 text-left">
-                <div class="flex items-center gap-3 text-left text-left">
+                <div class="flex items-center gap-3 text-left">
                     <div class="flex items-baseline gap-1">
                         <span class="text-xl font-black tracking-tighter text-white">CFGN</span><span class="text-xl font-black tracking-tighter text-emerald-500">.SS</span>
                     </div>
                     <div class="h-3 w-[1px] bg-white/10 text-center"></div>
                     <div class="flex flex-col leading-none text-left">
                         <span class="text-[8px] text-white/60 font-black tracking-wider">BY C.JIN</span>
-                        <span class="text-[6px] text-white/20 font-bold">VER 1.11</span>
+                        <span class="text-[6px] text-white/20 font-bold">VER 1.12</span>
                     </div>
                 </div>
                 <div id="pre-count-toggle" class="flex items-center gap-2 cursor-pointer group text-right">
@@ -73,7 +71,7 @@
                     </div>
                 </div>
             </header>
-            <nav class="grid grid-cols-4 gap-1 mb-4 bg-white/5 p-1 rounded-xl border border-white/5 text-center text-center">
+            <nav class="grid grid-cols-4 gap-1 mb-4 bg-white/5 p-1 rounded-xl border border-white/5 text-center">
                 <button id="mode-amrap" class="py-2 rounded-lg text-[8px] font-black tracking-widest bg-emerald-500 text-black transition-all">AMRAP</button>
                 <button id="mode-fortime" class="py-2 rounded-lg text-[8px] font-black tracking-widest text-white/40 transition-all">FOR TIME</button>
                 <button id="mode-tabata" class="py-2 rounded-lg text-[8px] font-black tracking-widest text-white/40 transition-all">TABATA</button>
@@ -81,8 +79,7 @@
             </nav>
         </div>
 
-        <section class="flex-1 flex flex-col items-center justify-center relative min-h-0 text-center text-center">
-            <!-- Fixed Status Slot -->
+        <section class="flex-1 flex flex-col items-center justify-center relative min-h-0 pt-12 text-center">
             <div class="status-slot">
                 <div id="status-label" class="text-emerald-400 text-base font-black tracking-[0.4em] transition-colors duration-300 uppercase">READY</div>
             </div>
@@ -94,35 +91,33 @@
 
             <div id="setup-hint" class="mt-2 text-[8px] text-white/20 font-bold tracking-[0.3em] uppercase">Tap To Set Time</div>
             
-            <!-- Metric Slot: Holds Tabata Config or AMRAP/FT Info Row to keep ROUND line constant -->
-            <div class="metric-slot w-full">
+            <div class="metric-slot w-full text-center">
                 <div id="tabata-config" class="flex items-center justify-center gap-10 opacity-0 transition-all hidden">
                     <div id="config-work" class="flex flex-col items-center cursor-pointer active:scale-95 text-center">
                         <span class="text-[8px] text-emerald-500 font-black tracking-[0.3em] mb-1 uppercase">WORK</span>
                         <span id="tabata-work-text" class="text-3xl font-black text-white font-mono">00:20</span>
                     </div>
-                    <div class="h-8 w-[1px] bg-white/10 text-center text-center"></div>
+                    <div class="h-8 w-[1px] bg-white/10 text-center"></div>
                     <div id="config-rest" class="flex flex-col items-center cursor-pointer active:scale-95 text-center">
                         <span class="text-[8px] text-red-500 font-black tracking-[0.3em] mb-1 uppercase text-center">REST</span>
                         <span id="tabata-rest-text" class="text-3xl font-black text-white/60 font-mono">00:10</span>
                     </div>
                 </div>
 
-                <div id="info-row" class="flex items-center justify-center gap-10 opacity-0 transition-all hidden">
+                <div id="info-row" class="flex items-center justify-center gap-10 opacity-0 transition-all hidden text-center">
                     <div id="record-col" class="flex flex-col items-center transition-all text-center">
                         <span class="text-[8px] font-black tracking-widest text-white/30 mb-1">RECORD</span>
                         <div class="flex items-baseline gap-1"><span id="rap-count" class="text-4xl font-black text-emerald-500 tabular-nums">0</span><span id="record-unit" class="text-[8px] font-black text-white/20 uppercase">Raps</span></div>
                     </div>
-                    <div class="h-10 w-[1px] bg-white/10 text-center text-center"></div>
+                    <div class="h-10 w-[1px] bg-white/10 text-center"></div>
                     <div class="flex flex-col items-center text-center">
-                        <span class="text-[8px] font-black tracking-widest text-white/30 mb-1">CAP</span>
+                        <span class="text-[8px] font-black tracking-widest text-white/30 mb-1 uppercase text-center">Cap</span>
                         <span id="target-display" class="text-xl font-black text-white/60 font-mono text-center">05:00</span>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- DASHBOARD SECTION: Round Info Line is now stable -->
         <div class="shrink-0 mt-2 space-y-3 text-center">
             <div id="round-info" class="dash-box flex flex-col items-center transition-all opacity-0 mx-auto max-w-[240px]">
                 <span class="text-[8px] font-black tracking-widest text-white/30 mb-1">ROUND</span>
@@ -133,7 +128,7 @@
                 </div>
             </div>
 
-            <div id="log-container" class="w-full hidden opacity-0 transition-all duration-500 h-10 overflow-hidden text-center text-center">
+            <div id="log-container" class="w-full hidden !opacity-0 h-0 overflow-hidden text-center">
                 <div id="log-list" class="log-scroll flex gap-2 overflow-x-auto whitespace-nowrap pb-2 justify-center"></div>
             </div>
 
@@ -147,14 +142,14 @@
     </main>
 
     <div id="keypad-overlay" class="fixed inset-0 z-[110] bg-zinc-950 flex flex-col p-6 translate-y-full transition-transform duration-300 hidden text-center">
-        <header class="flex justify-between items-center mb-8 border-b border-white/10 pb-4 text-left text-center"><span id="keypad-title" class="text-emerald-500 font-black tracking-widest uppercase text-left text-center">Set Time</span><button id="keypad-close" class="text-white/40 font-bold text-sm underline tracking-widest uppercase text-center text-center">Cancel</button></header>
-        <div class="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full text-center">
-            <div class="bg-white/5 rounded-3xl p-8 mb-8 border border-white/5 shadow-2xl text-center"><div id="keypad-display" class="text-7xl font-black font-mono text-center text-white tabular-nums text-center">05:00</div></div>
-            <div class="grid grid-cols-3 gap-3 text-center">
+        <header class="flex justify-between items-center mb-8 border-b border-white/10 pb-4 text-left text-center"><span id="keypad-title" class="text-emerald-500 font-black tracking-widest uppercase text-left text-center text-center">Set Time</span><button id="keypad-close" class="text-white/40 font-bold text-sm underline tracking-widest uppercase text-center text-center">Cancel</button></header>
+        <div class="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full text-center text-center text-center">
+            <div class="bg-white/5 rounded-3xl p-8 mb-8 border border-white/5 shadow-2xl text-center text-center"><div id="keypad-display" class="text-7xl font-black font-mono text-center text-white tabular-nums text-center text-center">05:00</div></div>
+            <div class="grid grid-cols-3 gap-3 text-center text-center">
                 <button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black">1</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black">2</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black">3</button>
-                <button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black">4</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black">5</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black text-center">6</button>
-                <button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black text-center">7</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black text-center text-center">8</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black text-center text-center">9</button>
-                <button id="key-clear" class="bg-red-500/10 text-red-500 py-6 rounded-2xl text-xl font-black text-center">CLR</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black text-center">0</button><button id="key-done" class="bg-emerald-500 text-black py-6 rounded-2xl text-xl font-black active:scale-95 uppercase text-center">Set</button>
+                <button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black text-center">4</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black text-center">5</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black text-center">6</button>
+                <button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black text-center text-center">7</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black text-center text-center">8</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black text-center text-center text-center">9</button>
+                <button id="key-clear" class="bg-red-500/10 text-red-500 py-6 rounded-2xl text-xl font-black text-center text-center">CLR</button><button class="key-num bg-white/5 py-6 rounded-2xl text-3xl font-black active:bg-emerald-500 active:text-black text-center text-center">0</button><button id="key-done" class="bg-emerald-500 text-black py-6 rounded-2xl text-xl font-black active:scale-95 uppercase text-center text-center">Set</button>
             </div>
         </div>
     </div>
@@ -188,7 +183,7 @@
         function setS(s) { state.status=s; els.sL.textContent=s; if(s==='REST'){document.body.classList.add('bg-rest-mode');}else{document.body.classList.remove('bg-rest-mode');} }
         function handleStart() { if(state.isRunning||state.isPreparing) return; if(state.status==='READY' && state.isPreCountEnabled) startPre(); else actS(); }
         function startPre() { state.isPreparing=true; els.pO.classList.remove('hidden'); let c=5; els.pN.textContent=c; playBeep(440); const i=setInterval(()=>{c--; if(c>0){els.pN.textContent=c; playBeep(440);}else{els.pN.textContent="GO"; playWhistle(); clearInterval(i); setTimeout(()=>{els.pO.classList.add('hidden'); state.isPreparing=false; actS();},500);}},1000); }
-        function actS() { state.isRunning=true; reqWL(); if(!state.isPreCountEnabled && state.status==='READY') playWhistle(); if(state.status!=='PAUSED'){ if(state.mode==='TABATA'){state.remainingSeconds=state.tabataWork; state.currentRound=1;} else if(state.mode==='EMOM'){state.remainingSeconds=60; state.currentRound=1;} else if(state.mode==='FORTIME'){state.elapsedSeconds=0; state.lastTouchTime=0;} else {state.remainingSeconds=state.totalSeconds; state.lastTouchTime=state.totalSeconds;} } setS('WORK'); startIntT(); els.stB.classList.add('hidden'); els.psB.classList.remove('hidden'); els.sH.classList.add('hidden'); els.tCf.classList.add('opacity-0'); if(state.mode!=='TABATA'&&state.mode!=='EMOM')els.iR.classList.remove('opacity-0'); els.rI.classList.remove('opacity-0'); if(state.mode==='EMOM'||state.mode==='FORTIME'||state.mode==='AMRAP'){els.lC.classList.remove('hidden'); setTimeout(()=>els.lC.classList.remove('opacity-0'),10);} }
+        function actS() { state.isRunning=true; reqWL(); if(!state.isPreCountEnabled && state.status==='READY') playWhistle(); if(state.status!=='PAUSED'){ if(state.mode==='TABATA'){state.remainingSeconds=state.tabataWork; state.currentRound=1;} else if(state.mode==='EMOM'){state.remainingSeconds=60; state.currentRound=1;} else if(state.mode==='FORTIME'){state.elapsedSeconds=0; state.lastTouchTime=0;} else {state.remainingSeconds=state.totalSeconds; state.lastTouchTime=state.totalSeconds;} } setS('WORK'); startIntT(); els.stB.classList.add('hidden'); els.psB.classList.remove('hidden'); els.sH.classList.add('hidden'); els.tCf.classList.add('opacity-0'); if(state.mode==='AMRAP'||state.mode==='FORTIME'){els.iR.classList.remove('opacity-0','hidden'); els.rI.classList.add('opacity-0');} else {els.iR.classList.add('opacity-0','hidden'); els.rI.classList.remove('opacity-0');} }
         function startIntT() { const st=Date.now(); const ir=(state.mode==='FORTIME')?state.elapsedSeconds:state.remainingSeconds; state.timerInterval=setInterval(()=>{ const d=(Date.now()-st)/1000; if(state.mode==='FORTIME'){ state.elapsedSeconds=Math.min(state.totalSeconds,ir+d); updD(state.elapsedSeconds); hBp(state.totalSeconds-state.elapsedSeconds); if(state.elapsedSeconds>=state.totalSeconds)fnT(); }else{ state.remainingSeconds=Math.max(0,ir-d); updD(state.remainingSeconds); hBp(state.remainingSeconds); if(state.mode==='TABATA'||state.mode==='EMOM')els.rT.textContent=`${state.currentRound.toString().padStart(2,'0')}/${state.totalRounds.toString().padStart(2,'0')}`; if(state.remainingSeconds <= 0)hTr(); } },30); }
         function hBp(t) { const c=Math.ceil(t); if(c<=3&&c>0&&c!==lSec){ playBeep(state.status==='WORK'?440:660); lSec=c; } }
         function hTr() { clearInterval(state.timerInterval); if(state.mode!=='TABATA'&&state.mode!=='EMOM'){fnT();} else if(state.mode==='TABATA'){ if(state.status==='WORK'){ if(state.currentRound>=state.totalRounds){fnT();return;} setS('REST'); state.remainingSeconds=state.tabataRest; playBeep(220,0.3); lSec=-1; startIntT(); } else { state.currentRound++; setS('WORK'); state.remainingSeconds=state.tabataWork; playBeep(880,0.3); lSec=-1; startIntT(); } } else if(state.mode==='EMOM'){ if(state.currentRound>=state.totalRounds){fnT();return;} state.currentRound++; setS('WORK'); state.remainingSeconds=60; playWhistle(); lSec=-1; startIntT(); } }
